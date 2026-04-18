@@ -36,7 +36,7 @@
       margin: 2px;
     }
 
-    /* popup */
+    /* overlay */
     #overlay {
       position: fixed;
       top: 0;
@@ -48,6 +48,7 @@
       z-index: 1500;
     }
 
+    /* popup */
     #popup {
       position: fixed;
       top: 50%;
@@ -73,108 +74,4 @@
       cursor: pointer;
     }
   </style>
-</head>
-
-<body>
-
-<div id="controls">
-  <button onclick="closePolygon()">Close polygon</button>
-  <button onclick="undo()">Undo</button>
-  <button onclick="clearAll()">Clear</button>
-  <button onclick="calculate()">Calculate</button>
-</div>
-
-<div id="map"></div>
-
-<div id="overlay" onclick="closePopup()"></div>
-
-<div id="popup">
-  <div id="result"></div>
-  <button id="closeBtn" onclick="closePopup()">Close</button>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-  let points = [];
-  let polyline = null;
-  let polygon = null;
-
-  const map = L.map('map').setView([52.1, 21.0], 5);
-
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(map);
-
-  // фикс на случай layout-глюков
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 100);
-
-  // click → add point
-  map.on('click', (e) => {
-    points.push([e.latlng.lat, e.latlng.lng]);
-    render();
-  });
-
-  function render() {
-    if (polyline) map.removeLayer(polyline);
-    if (polygon) map.removeLayer(polygon);
-
-    if (points.length > 0) {
-      polyline = L.polyline(points, { color: 'blue' }).addTo(map);
-    }
-  }
-
-  function closePolygon() {
-    if (points.length < 3) return;
-
-    if (polyline) {
-      map.removeLayer(polyline);
-      polyline = null;
-    }
-
-    polygon = L.polygon(points, {
-      color: 'blue',
-      fillColor: '#3388ff',
-      fillOpacity: 0.3
-    }).addTo(map);
-  }
-
-  function formatPoints() {
-    return "[" + points.map(p => {
-      return `[${p[0].toFixed(2)}, ${p[1].toFixed(2)}]`;
-    }).join(", ") + "]";
-  }
-
-  function calculate() {
-    const formatted = formatPoints();
-
-    document.getElementById("result").textContent = formatted;
-    document.getElementById("popup").style.display = "block";
-    document.getElementById("overlay").style.display = "block";
-  }
-
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-    document.getElementById("overlay").style.display = "none";
-  }
-
-  function undo() {
-    points.pop();
-    render();
-  }
-
-  function clearAll() {
-    points = [];
-
-    if (polyline) map.removeLayer(polyline);
-    if (polygon) map.removeLayer(polygon);
-
-    polyline = null;
-    polygon = null;
-  }
-</script>
-
-</body>
-</html>
+</head
