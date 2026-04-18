@@ -13,24 +13,13 @@
     body {
       margin: 0;
       font-family: monospace;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100vh;
     }
 
     #map {
       flex: 1;
-    }
-
-    #panel {
-      height: 180px;
-      border-top: 1px solid #ccc;
-      padding: 10px;
-      overflow: auto;
-      background: #111;
-      color: #0f0;
-      font-size: 12px;
-      white-space: pre;
     }
 
     #controls {
@@ -47,6 +36,43 @@
     button {
       margin: 2px;
     }
+
+    /* POPUP */
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      max-height: 70%;
+      background: #111;
+      color: #0f0;
+      padding: 15px;
+      border: 1px solid #333;
+      display: none;
+      z-index: 2000;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      z-index: 1500;
+    }
+
+    #closeBtn {
+      margin-top: 10px;
+      background: #222;
+      color: #0f0;
+      border: 1px solid #444;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -56,16 +82,22 @@
   <button onclick="closePolygon()">Close polygon</button>
   <button onclick="undo()">Undo</button>
   <button onclick="clearAll()">Clear</button>
+  <button onclick="calculate()">Calculate</button>
 </div>
 
 <div id="map"></div>
-<pre id="panel">[]</pre>
+
+<div id="overlay" onclick="closePopup()"></div>
+
+<div id="popup">
+  <div id="result"></div>
+  <button id="closeBtn" onclick="closePopup()">Close</button>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
   let points = [];
-
   let polyline = null;
   let polygon = null;
 
@@ -75,14 +107,13 @@
     maxZoom: 19
   }).addTo(map);
 
-  // CLICK → add point
+  // ADD POINT
   map.on('click', (e) => {
     points.push([e.latlng.lat, e.latlng.lng]);
     render();
-    updateOutput();
   });
 
-  // RENDER
+  // RENDER LINE
   function render() {
     if (polyline) map.removeLayer(polyline);
     if (polygon) map.removeLayer(polygon);
@@ -108,30 +139,45 @@
     }).addTo(map);
   }
 
-  // OUTPUT
-  function updateOutput() {
-    document.getElementById('panel').textContent =
-      JSON.stringify(points, null, 2);
+  // FORMAT POINTS
+  function formatPoints() {
+    return "[" + points.map(p => {
+      return [${p[0].toFixed(2)}, ${p[1].toFixed(2)}];
+    }).join(", ") + "]";
+  }
+
+  // CALCULATE (POPUP)
+  function calculate() {
+    const formatted = formatPoints();
+
+    document.getElementById("result").textContent = formatted;
+
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+  }
+
+  // CLOSE POPUP
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
   }
 
   // UNDO
   function undo() {
     points.pop();
     render();
-    updateOutput();
   }
 
   // CLEAR
   function clearAll() {
     points = [];
+
     if (polyline) map.removeLayer(polyline);
     if (polygon) map.removeLayer(polygon);
+
     polyline = null;
     polygon = null;
-    updateOutput();
   }
-
-  updateOutput();
 </script>
 
 </body>
