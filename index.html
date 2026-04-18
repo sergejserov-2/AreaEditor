@@ -74,4 +74,34 @@
       cursor: pointer;
     }
   </style>
-</head
+</head>
+
+<body>
+
+<div id="controls">
+  <button onclick="closePolygon()">Close polygon</button>
+  <button onclick="undo()">Undo</button>
+  <button onclick="clearAll()">Clear</button>
+  <button onclick="calculate()">Calculate</button>
+</div>
+
+<div id="map"></div>
+
+<div id="overlay" onclick="closePopup()"></div>
+
+<div id="popup">
+  <div id="result"></div>
+  <button id="closeBtn" onclick="closePopup()">Close</button>
+</div>
+
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Geometry utils -->
+<script src="https://unpkg.com/leaflet-geometryutil"></script>
+
+<!-- Main app -->
+<script type="module" src="./app.js"></script>
+
+</body>
+</html>
