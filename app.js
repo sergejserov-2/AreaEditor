@@ -4,7 +4,7 @@ import {
   formatPoints
 } from "./geometry.js";
 
-import { stabilizePoints } from "./stabilizer.js";
+import { simplifyPoints } from "./stabilizer.js";
 
 // --- STATE ---
 let points = [];
@@ -90,7 +90,7 @@ Target: ${target}
 Area: ${(area / 1_000_000).toFixed(2)} km²
 </pre>
 
-<button onclick="stabilize()">Stabilize</button>`;
+<button onclick="stabilize()">Simplify</button>`;
 
   document.getElementById("result").innerHTML = html;
 
@@ -99,8 +99,8 @@ Area: ${(area / 1_000_000).toFixed(2)} km²
 };
 
 // --- STABILIZE ---
-window.stabilize = function () {
-  points = stabilizePoints(points, 0.01);
+window.simplify = function () {
+  points = simplifyPoints(points, 0.01);
   render();
   calculate();
 };
