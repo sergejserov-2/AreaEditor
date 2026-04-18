@@ -1,6 +1,6 @@
 import {
   calculateArea,
-  calculateRecommendedPoints,
+  calculateTargetPointCount,
   formatPoints
 } from "./geometry.js";
 
@@ -20,7 +20,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 setTimeout(() => map.invalidateSize(), 100);
 
-// --- CLICK ---
+// --- INPUT ---
 map.on('click', (e) => {
   points.push([e.latlng.lat, e.latlng.lng]);
   render();
@@ -36,7 +36,7 @@ function render() {
   }
 }
 
-// --- CONTROLS ---
+// --- BUTTONS ---
 window.closePolygon = function () {
   if (points.length < 3) return;
 
@@ -77,7 +77,7 @@ window.calculate = function () {
 
   const area = calculateArea(points);
   const current = points.length;
-  const recommended = calculateRecommendedPoints(area);
+  const target = calculateTargetPointCount(area);
   const formatted = formatPoints(points);
 
   const html =
@@ -86,7 +86,7 @@ Points:
 ${formatted}
 
 Current: ${current}
-Recommended: ${recommended}
+Target: ${target}
 Area: ${(area / 1_000_000).toFixed(2)} km²
 </pre>
 
