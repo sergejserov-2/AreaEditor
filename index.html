@@ -36,19 +36,14 @@
       margin: 2px;
     }
 
-    /* overlay */
     #overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: rgba(0,0,0,0.6);
       display: none;
       z-index: 1500;
     }
 
-    /* popup */
     #popup {
       position: fixed;
       top: 50%;
@@ -63,15 +58,11 @@
       display: none;
       z-index: 2000;
       overflow: auto;
-      white-space: pre-wrap;
     }
 
-    #closeBtn {
-      margin-top: 10px;
-      background: #222;
-      color: #0f0;
-      border: 1px solid #444;
-      cursor: pointer;
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -91,16 +82,11 @@
 
 <div id="popup">
   <div id="result"></div>
-  <button id="closeBtn" onclick="closePopup()">Close</button>
 </div>
 
-<!-- Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Geometry utils -->
 <script src="https://unpkg.com/leaflet-geometryutil"></script>
 
-<!-- Main app -->
 <script type="module" src="./app.js"></script>
 
 </body>
