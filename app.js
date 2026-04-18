@@ -4,7 +4,7 @@ import {
   formatPoints
 } from "./geometry.js";
 
-import { simplifyPoints } from "./simplifer.js";
+import { simplifyToN } from "./simplifier.js";
 
 // --- STATE ---
 let points = [];
@@ -20,13 +20,12 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 setTimeout(() => map.invalidateSize(), 100);
 
-// --- INPUT ---
+// --- DRAW ---
 map.on('click', (e) => {
   points.push([e.latlng.lat, e.latlng.lng]);
   render();
 });
 
-// --- RENDER ---
 function render() {
   if (polyline) map.removeLayer(polyline);
   if (polygon) map.removeLayer(polygon);
@@ -36,7 +35,7 @@ function render() {
   }
 }
 
-// --- BUTTONS ---
+// --- CONTROLS ---
 window.closePolygon = function () {
   if (points.length < 3) return;
 
@@ -59,8 +58,10 @@ window.undo = function () {
 
 window.clearAll = function () {
   points = [];
+
   if (polyline) map.removeLayer(polyline);
   if (polygon) map.removeLayer(polygon);
+
   polyline = null;
   polygon = null;
 };
@@ -80,8 +81,8 @@ window.calculate = function () {
   const target = calculateTargetPointCount(area);
   const formatted = formatPoints(points);
 
-  const html =
-`<pre>
+  const html = `
+<pre>
 Points:
 ${formatted}
 
@@ -90,17 +91,9 @@ Target: ${target}
 Area: ${(area / 1_000_000).toFixed(2)} km²
 </pre>
 
-<button onclick="stabilize()">Simplify</button>`;
+<button onclick="simplify()">Simplify</button>
+`;
 
   document.getElementById("result").innerHTML = html;
 
-  document.getElementById("popup").style.display = "block";
-  document.getElementById("overlay").style.display = "block";
-};
-
-// --- STABILIZE ---
-window.simplify = function () {
-  points = simplifyPoints(points, 0.01);
-  render();
-  calculate();
-};
+  document.getElementById("popup").style.display = "block
