@@ -86,12 +86,12 @@ window.calculate = function () {
   const formatted = formatPoints(points);
 
   const resultText =
-Points:
+`Points:
 ${formatted}
 
 Current: ${currentCount}
 Recommended: ${recommended}
-Area: ${(area / 1_000_000).toFixed(2)} km²;
+Area: ${(area / 1_000_000).toFixed(2)} km²`;
 
   document.getElementById("result").textContent = resultText;
 
