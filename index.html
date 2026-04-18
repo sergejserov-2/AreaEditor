@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Polygon Editor</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #map {
+      flex: 1;
+    }
+
+    #panel {
+      height: 200px;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      overflow: auto;
+      background: #111;
+      color: #0f0;
+      font-size: 12px;
+      white-space: pre;
+    }
+
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    button {
+      margin: 2px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="controls">
+  <button onclick="undo()">Undo</button>
+  <button onclick="clearAll()">Clear</button>
+</div>
+
+<div id="map"></div>
+
+<pre id="panel">[]</pre>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  // --- state ---
+  let points = [];
+  let polyline = null;
+
+  // --- map init ---
+  const map = L.map('map').setView([52.1, 21.0], 5);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map);
+
+  // --- click handler ---
+  map.on('click', (e) => {
+    const p = [e.latlng.lat, e.latlng.lng];
+    points.push(p);
+    render();
+    updateOutput();
+  });
+
+  // --- render polyline ---
+  function render() {
+    if (polyline) {
+      map.removeLayer(polyline);
+    }
+
+    if (points.length > 0) {
+      polyline = L.polyline(points, { color: 'blue' }).addTo(map);
+    }
+  }
+
+  // --- output ---
+  function updateOutput() {
+    document.getElementById('panel').textContent =
+      JSON.stringify(points, null, 2);
+  }
+
+  // --- undo ---
+  function undo() {
+    points.pop();
+    render();
+    updateOutput();
+  }
+
+  // --- clear ---
+  function clearAll() {
+    points = [];
+    render();
+    updateOutput();
+  }
+
+  // init
+  updateOutput();
+</script>
+
+</body>
+</html>
