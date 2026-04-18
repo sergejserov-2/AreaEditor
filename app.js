@@ -96,4 +96,17 @@ Area: ${(area / 1_000_000).toFixed(2)} km²
 
   document.getElementById("result").innerHTML = html;
 
-  document.getElementById("popup").style.display = "block
+  document.getElementById("popup").style.display = "block";
+  document.getElementById("overlay").style.display = "block";
+};
+
+// --- SIMPLIFY TO TARGET ---
+window.simplify = function () {
+  const area = calculateArea(points);
+  const target = calculateTargetPointCount(area);
+
+  points = simplifyToN(points, target);
+
+  render();
+  calculate();
+};
