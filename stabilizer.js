@@ -1,5 +1,3 @@
-// remove too-close points
-
 function distance(a, b) {
   const dx = a[0] - b[0];
   const dy = a[1] - b[1];
