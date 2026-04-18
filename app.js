@@ -4,30 +4,29 @@ import {
   formatPoints
 } from "./geometry.js";
 
+import { stabilizePoints } from "./stabilizer.js";
+
 // --- STATE ---
 let points = [];
 let polyline = null;
 let polygon = null;
 
-// --- MAP INIT ---
+// --- MAP ---
 const map = L.map('map').setView([52.1, 21.0], 5);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(map);
 
-// fix layout issues
-setTimeout(() => {
-  map.invalidateSize();
-}, 100);
+setTimeout(() => map.invalidateSize(), 100);
 
-// --- CLICK ON MAP ---
+// --- CLICK ---
 map.on('click', (e) => {
   points.push([e.latlng.lat, e.latlng.lng]);
   render();
 });
 
-// --- RENDER LINE / POLYGON ---
+// --- RENDER ---
 function render() {
   if (polyline) map.removeLayer(polyline);
   if (polygon) map.removeLayer(polygon);
@@ -37,7 +36,7 @@ function render() {
   }
 }
 
-// --- CLOSE POLYGON ---
+// --- CONTROLS ---
 window.closePolygon = function () {
   if (points.length < 3) return;
 
@@ -53,24 +52,20 @@ window.closePolygon = function () {
   }).addTo(map);
 };
 
-// --- UNDO ---
 window.undo = function () {
   points.pop();
   render();
 };
 
-// --- CLEAR ---
 window.clearAll = function () {
   points = [];
-
   if (polyline) map.removeLayer(polyline);
   if (polygon) map.removeLayer(polygon);
-
   polyline = null;
   polygon = null;
 };
 
-// --- POPUP CONTROL ---
+// --- POPUP ---
 window.closePopup = function () {
   document.getElementById("popup").style.display = "none";
   document.getElementById("overlay").style.display = "none";
@@ -81,20 +76,31 @@ window.calculate = function () {
   if (points.length < 3) return;
 
   const area = calculateArea(points);
-  const currentCount = points.length;
+  const current = points.length;
   const recommended = calculateRecommendedPoints(area);
   const formatted = formatPoints(points);
 
-  const resultText =
-`Points:
+  const html =
+`<pre>
+Points:
 ${formatted}
 
-Current: ${currentCount}
+Current: ${current}
 Recommended: ${recommended}
-Area: ${(area / 1_000_000).toFixed(2)} km²`;
+Area: ${(area / 1_000_000).toFixed(2)} km²
+</pre>
 
-  document.getElementById("result").textContent = resultText;
+<button onclick="stabilize()">Stabilize</button>`;
+
+  document.getElementById("result").innerHTML = html;
 
   document.getElementById("popup").style.display = "block";
   document.getElementById("overlay").style.display = "block";
+};
+
+// --- STABILIZE ---
+window.stabilize = function () {
+  points = stabilizePoints(points, 0.01);
+  render();
+  calculate();
 };
