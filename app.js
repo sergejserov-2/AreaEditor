@@ -4,7 +4,7 @@ import {
   formatPoints
 } from "./geometry.js";
 
-import { simplifyPoints } from "./stabilizer.js";
+import { simplifyPoints } from "./simplifer.js";
 
 // --- STATE ---
 let points = [];
