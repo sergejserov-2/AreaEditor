@@ -6,7 +6,7 @@
 // --- FORMAT POINTS ---
 export function formatPoints(points) {
   return "[" + points.map(p => {
-    return [${p[0].toFixed(2)}, ${p[1].toFixed(2)}];
+    return `[${p[0].toFixed(2)}, ${p[1].toFixed(2)}]`;
   }).join(", ") + "]";
 }
 
